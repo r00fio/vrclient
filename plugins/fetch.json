@@ -1,0 +1,96 @@
+{
+    "cordova-plugin-whitelist": {
+        "source": {
+            "type": "registry",
+            "id": "cordova-plugin-whitelist@1"
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "cordova-plugin-crosswalk-webview": {
+        "source": {
+            "type": "registry",
+            "id": "cordova-plugin-crosswalk-webview@1.6.1"
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "cordova-plugin-device-motion": {
+        "source": {
+            "type": "git",
+            "url": "https://github.com/apache/cordova-plugin-device-motion.git",
+            "subdir": "."
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "com.manueldeveloper.volume-buttons": {
+        "source": {
+            "type": "git",
+            "url": "https://github.com/manueldeveloper/cordova-plugin-volume-buttons.git",
+            "subdir": "."
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "cordova-plugin-screen-orientation": {
+        "source": {
+            "type": "registry",
+            "id": "cordova-plugin-screen-orientation@1.4.2"
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "cordova-volume-control": {
+        "source": {
+            "type": "registry",
+            "id": "cordova-volume-control"
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "cordova-plugin-device-orientation": {
+        "source": {
+            "type": "git",
+            "url": "https://github.com/apache/cordova-plugin-device-orientation.git",
+            "subdir": "."
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "cordova-plugin-device-sensor-fusion": {
+        "source": {
+            "type": "git",
+            "url": "https://github.com/adirtyshame/cordova-plugin-device-sensor-fusion.git",
+            "subdir": "."
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "cordova-plugin-gyroscope": {
+        "source": {
+            "type": "registry",
+            "id": "cordova-plugin-gyroscope@0.1.4"
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "org.dartlang.phonegap.gyroscope": {
+        "source": {
+            "type": "git",
+            "url": "https://github.com/zanderso/cordova-plugin-gyroscope.git",
+            "subdir": "."
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "cordova-plugin-magnetometer": {
+        "source": {
+            "type": "git",
+            "url": "https://github.com/sdesalas/cordova-plugin-magnetometer.git",
+            "subdir": "."
+        },
+        "is_top_level": true,
+        "variables": {}
+    }
+}

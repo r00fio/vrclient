@@ -12,7 +12,7 @@ application.controller('DeviceOrientationCtrl', ['$scope', '$state', '$rootScope
         if (window.screen.lockOrientation) {
             window.screen.lockOrientation('portrait');
         }
-        var host = 'http://192.168.1.43:3000/';
+        var host = 'http://192.168.0.105:3000/';
         $scope.rotation = {};
         $scope.old = {};
         $scope.skipSendData = false;
@@ -23,9 +23,9 @@ application.controller('DeviceOrientationCtrl', ['$scope', '$state', '$rootScope
 
         $scope.rotation = {};
         function onSuccess(result) {
-            $scope.rotation.x = Math.round(result.x * 100);
-            $scope.rotation.y = Math.round(result.y * 100);
-            $scope.rotation.z = Math.round(result.z * 100);
+            $scope.rotation.x = Math.round(result.x);
+            $scope.rotation.y = Math.round(result.y);
+            $scope.rotation.z = Math.round(result.z);
             $rootScope.$applyAsync();
             sendData();
             // console.log('success')

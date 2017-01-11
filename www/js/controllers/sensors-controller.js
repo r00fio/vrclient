@@ -28,7 +28,7 @@ application.controller('SensorsCtrl', ['$scope', '$state', '$rootScope', '$timeo
         if (window.screen.lockOrientation) {
             window.screen.lockOrientation('portrait');
         }
-        var host = 'http://192.168.1.43:3000/orientation/accelerometer';
+        var host = 'http://172.17.1.9:3000/orientation/accelerometer';
         $scope.acceleration = {};
 
         function sendData() {

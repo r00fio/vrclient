@@ -54,6 +54,17 @@ public class Magnetometer extends CordovaPlugin implements SensorEventListener  
     long timeStamp;                     // time of most recent value
     long lastAccessTime;                // time the value was last retrieved
 
+      public float swRoll;
+      public float swPitch;
+      public float swAzimuth;
+
+      public SensorManager mSensorManager;
+      public Sensor accelerometer;
+      public Sensor magnetometer;
+
+      public float[] mAccelerometer = null;
+      public float[] mGeomagnetic = null;
+
     private SensorManager sensorManager;// Sensor manager
     Sensor mSensor;                     // Magnetic sensor returned by sensor manager
 
@@ -140,11 +151,18 @@ public class Magnetometer extends CordovaPlugin implements SensorEventListener  
         // Get magnetic field sensor from sensor manager
         @SuppressWarnings("deprecation")
         List<Sensor> list = this.sensorManager.getSensorList(Sensor.TYPE_MAGNETIC_FIELD);
+        List<Sensor> accelerometerList = this.sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER);
 
         // If found, then register as listener
         if (list != null && list.size() > 0) {
-            this.mSensor = list.get(0);
-            this.sensorManager.registerListener(this, this.mSensor, SensorManager.SENSOR_DELAY_FASTEST);
+            swRoll = 0;
+            swPitch = 0;
+            swAzimuth = 0;
+
+            this.magnetometer = list.get(0);
+            this.accelerometer = accelerometerList.get(0);
+            this.sensorManager.registerListener(this, this.magnetometer, SensorManager.SENSOR_DELAY_FASTEST);
+            this.sensorManager.registerListener(this, this.accelerometer, SensorManager.SENSOR_DELAY_FASTEST);
             this.lastAccessTime = System.currentTimeMillis();
             this.setStatus(Magnetometer.STARTING);
         }
@@ -179,7 +197,10 @@ public class Magnetometer extends CordovaPlugin implements SensorEventListener  
         }
     }
 
-
+    public void Clear() {
+            this.sensorManager.unregisterListener(this, accelerometer);
+            this.sensorManager.unregisterListener(this, magnetometer);
+      }
     //--------------------------------------------------------------------------
     // SensorEventListener Interface
     //--------------------------------------------------------------------------
@@ -191,16 +212,33 @@ public class Magnetometer extends CordovaPlugin implements SensorEventListener  
      */
     public void onSensorChanged(SensorEvent event) {
 
-        // Save reading
-        this.timeStamp = System.currentTimeMillis();
-        this.x = event.values[0];
-        this.y = event.values[1];
-        this.z = event.values[2];
+        // onSensorChanged gets called for each sensor so we have to remember the values
+                 if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER)
+                 {
+                     mAccelerometer = event.values;
+                 }
+                 if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD)
+                 {
+                     mGeomagnetic = event.values;
+                 }
 
-        // If heading hasn't been read for TIMEOUT time, then turn off compass sensor to save power
-        if ((this.timeStamp - this.lastAccessTime) > this.TIMEOUT) {
-            this.stop();
-        }
+                 if (mAccelerometer != null && mGeomagnetic != null)
+                 {
+                     float R[] = new float[9];
+                     float I[] = new float[9];
+                     boolean success = SensorManager.getRotationMatrix(R, I, mAccelerometer, mGeomagnetic);
+
+                     if (success)
+                     {
+                         float orientation[] = new float[3];
+                         SensorManager.getOrientation(R, orientation);
+
+                         // at this point, orientation contains the azimuth, pitch and roll values.
+                         this.x = (float) (180 * orientation[0] / Math.PI);
+                         this.y = (float) (180 * orientation[1] / Math.PI);
+                         this.z = (float) (180 * orientation[2] / Math.PI);
+                     }
+                 }
     }
 
     /**

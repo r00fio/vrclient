@@ -1,57 +1,10 @@
-<ion-view ng-app="app" title="Sensors" style="background-color: #1c1d1f; color:#0c82df;">
+<ion-view ng-app="app" title="Left Leg Accelerometer"  style="background-color: #1c1d1f; color:#0c82df;">
+    <ion-nav-buttons side="left">
+        <a ng-click="goBack()" class="button button-icon icon ion-ios-arrow-back"></a>
+    </ion-nav-buttons>
     <ion-content>
         <div class="app">
-            <table style="margin-top: 60px">
-                <div> X: {{acceleration.x}} Y:  {{acceleration.y}} Z:  {{acceleration.z}}</div>
-                <tr>
-                    <td>DIRECTION X   </td>
-                    <td>DIRECTION Z   </td>
-                </tr>
-                <tr>
-                    <td>{{directionX}}</td>
-                    <td>{{directionZ}}</td>
-                </tr>
-                <div>SP Z : {{stopPoint}} SP X : {{xStopPoint}}</div>
-            </table>
-            <ion-list>
-                <div class="list">
-                    <div>SENSIVITY of sma: {{len.max}}</div>
-                    <div class="item range range-positive">
-                        <i class="icon ion-ios-sunny-outline"></i>
-                        <input type="range" name="volume" min="0" max="100" ng-model="len.max">
-                        <i class="icon ion-ios-sunny"></i>
-                    </div>
-                    <div>SENSIVITY of axis Z: {{sensivity.z}}</div>
-                    <div class="item range range-positive">
-                        <i class="icon ion-ios-sunny-outline"></i>
-                        <input type="range" name="volume" min="0" max="30000" ng-model="sensivity.z">
-                        <i class="icon ion-ios-sunny"></i>
-                    </div>
-
-                    <div>SENSIVITY of axis Z StopPoint: {{sensivity.zstop}}</div>
-                    <div class="item range range-positive">
-                        <i class="icon ion-ios-sunny-outline"></i>
-                        <input type="range" name="volume" min="0" max="30000" ng-model="sensivity.zstop">
-                        <i class="icon ion-ios-sunny"></i>
-                    </div>
-
-
-                    <div>SENSIVITY of axis X: {{sensivity.x}}</div>
-                    <div class="item range range-positive">
-                        <i class="icon ion-ios-sunny-outline"></i>
-                        <input type="range" name="volume" min="0" max="30000" ng-model="sensivity.x">
-                        <i class="icon ion-ios-sunny"></i>
-                    </div>
-
-                    <div>SENSIVITY of axis X StopPoint: {{sensivity.xstop}}</div>
-                    <div class="item range range-positive">
-                        <i class="icon ion-ios-sunny-outline"></i>
-                        <input type="range" name="volume" min="0" max="30000" ng-model="sensivity.xstop">
-                        <i class="icon ion-ios-sunny"></i>
-                    </div>
-                </div>
-
-            </ion-list>
+            <div style="margin-top: 60px"> X: {{acceleration.x}} Y:  {{acceleration.y}} Z:  {{acceleration.z}}</div>
             <button class="button button-positive button-block" ng-click="calibrateSensors()">Calibrate</button>
         </div>
     </ion-content>

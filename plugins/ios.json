@@ -16,12 +16,6 @@
         "cordova-plugin-device-motion": {
             "PACKAGE_NAME": "io.cordova.hellocordova"
         },
-        "cordova-plugin-screen-orientation": {
-            "PACKAGE_NAME": "io.cordova.hellocordova"
-        },
-        "cordova-plugin-whitelist": {
-            "PACKAGE_NAME": "io.cordova.hellocordova"
-        },
         "cordova-plugin-device-orientation": {
             "PACKAGE_NAME": "io.cordova.hellocordova"
         },
@@ -31,10 +25,16 @@
         "cordova-plugin-gyroscope": {
             "PACKAGE_NAME": "io.cordova.hellocordova"
         },
-        "org.dartlang.phonegap.gyroscope": {
+        "cordova-plugin-magnetometer": {
             "PACKAGE_NAME": "io.cordova.hellocordova"
         },
-        "cordova-plugin-magnetometer": {
+        "cordova-plugin-screen-orientation": {
+            "PACKAGE_NAME": "io.cordova.hellocordova"
+        },
+        "cordova-plugin-whitelist": {
+            "PACKAGE_NAME": "io.cordova.hellocordova"
+        },
+        "org.dartlang.phonegap.gyroscope": {
             "PACKAGE_NAME": "io.cordova.hellocordova"
         }
     },

@@ -6,62 +6,102 @@
  */
 var application = angular.module('app');
 
-application.controller('DeviceOrientationCtrl', ['$scope', '$state', '$rootScope', '$timeout','$interval',
-    function ($scope, $state, $rootScope, $timeout,$interval) {
+application.controller('DeviceOrientationCtrl', ['$scope', '$state', '$rootScope', '$timeout', '$interval',
+    function ($scope, $state, $rootScope, $timeout, $interval) {
 
         if (window.screen.lockOrientation) {
             window.screen.lockOrientation('portrait');
         }
-        var host = 'http://192.168.0.105:3000/';
+
         $scope.rotation = {};
         $scope.old = {};
         $scope.skipSendData = false;
 
-        $timeout(function () {
-            var watchID = cordova.plugins.magnetometer.watchReadings(onSuccess,onError)
-        },5000)
 
-        $scope.rotation = {};
+        $timeout(function () {
+            var watchID = cordova.plugins.magnetometer.watchReadings(onSuccess, onError)
+            // if (navigator.fusion) {
+            //     navigator.fusion.setMode(function (result) {
+            //
+            //     }, function (error) {
+            //
+            //     }, {mode: 5});
+            // }
+            // var options = {
+            //     frequency: 100
+            // }; 
+            // if (navigator.fusion) {
+            //     var watchID = navigator.fusion.watchSensorFusion(onSuccess, onError, options);
+            // }
+
+        }, 3000)
+
         function onSuccess(result) {
-            $scope.rotation.x = Math.round(result.x);
-            $scope.rotation.y = Math.round(result.y);
-            $scope.rotation.z = Math.round(result.z);
+            $scope.rotation.ax = Math.round(result.ax * 100);
+            $scope.rotation.ay = Math.round(result.ay * 100);
+            $scope.rotation.az = Math.round(result.az * 100);
+            
+            $scope.rotation.mx = Math.round(result.mx * 100);
+            $scope.rotation.my = Math.round(result.my * 100);
+            $scope.rotation.mz = Math.round(result.mz * 100);
+            
+            $scope.rotation.gx = Math.round(result.gx * 100);
+            $scope.rotation.gy = Math.round(result.gy * 100);
+            $scope.rotation.gz = Math.round(result.gz * 100);
+            //
+            // $scope.rotation.x = result.quaternion.x * 100;
+            // $scope.rotation.y = result.quaternion.y * 100;
+            // $scope.rotation.z = result.quaternion.z * 100;
+            // $scope.rotation.mx = result.mx * 100;
+            // $scope.rotation.my = result.my * 100;
+            // $scope.rotation.mz = result.mz * 100;
+            // $scope.rotation.w = result.w * 100;
+            
+            // $scope.rotation.pitch = result.eulerAngles.pitch;
+            // $scope.rotation.roll = result.eulerAngles.roll;
+            // $scope.rotation.yaw = result.eulerAngles.yaw;
+            
             $rootScope.$applyAsync();
             sendData();
             // console.log('success')
-            
+
         };
-        
+
 
         function onError(fusionError) {
-            alert('Fusion error: ' + fusionError.code);
+            $scope.magnetometerError = 'error';
         };
 
 
-        function sendData(url, leg) {
-            if (!url) {
-                url = host + 'orientation'
-            }
+        function sendData() {
+
             var data = {
-                x: $scope.rotation.x,
-                y: $scope.rotation.y,
-                z: $scope.rotation.z,
-                DZ: $scope.directionZ,
-                DX: $scope.directionX,
-                T: $scope.rotation.timestamp,
-                leg: leg
+                w: $scope.rotation.w,
+                ax: $scope.rotation.ax,
+                ay: $scope.rotation.ay,
+                az: $scope.rotation.az,
+                yaw:$scope.rotation.yaw,
+                pitch:$scope.rotation.pitch,
+                roll:$scope.rotation.roll,
+                mx: $scope.rotation.mx,
+                my: $scope.rotation.my,
+                mz: $scope.rotation.mz,
+                gx: $scope.rotation.gx,
+                gy: $scope.rotation.gy,
+                gz: $scope.rotation.gz,
+                
+                T: $scope.rotation.timestamp
             }
 
             $.ajax({
                 type: 'POST',
-                url: url,
+                url: $rootScope.host.url + '/orientation',
                 data: data,
                 success: function (data) {
                 },
                 dataType: 'json',
                 async: false
             });
-
         }
 
     }]);

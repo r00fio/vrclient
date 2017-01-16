@@ -47,9 +47,18 @@ public class Magnetometer extends CordovaPlugin implements SensorEventListener  
     public long TIMEOUT = 30000;        // Timeout in msec to shut off listener
 
     int status;                         // status of listener
-    float x;                            // magnetometer x value
-    float y;                            // magnetometer y value
-    float z;                            // magnetometer z value
+    float ax;
+    float ay;
+    float az;
+
+    float mx;                            // magnetometer x value
+    float my;                            // magnetometer y value
+    float mz;                            // magnetometer z value
+
+    float gx;                            // gyroscope x value
+    float gy;                            // gyroscope  y value
+    float gz;                            // gyroscope  z value
+
     float magnitude;                    // magnetometer calculated magnitude
     long timeStamp;                     // time of most recent value
     long lastAccessTime;                // time the value was last retrieved
@@ -61,9 +70,11 @@ public class Magnetometer extends CordovaPlugin implements SensorEventListener  
       public SensorManager mSensorManager;
       public Sensor accelerometer;
       public Sensor magnetometer;
+      public Sensor gyroscope;
 
       public float[] mAccelerometer = null;
       public float[] mGeomagnetic = null;
+      public float[] mGyroscope = null;
 
     private SensorManager sensorManager;// Sensor manager
     Sensor mSensor;                     // Magnetic sensor returned by sensor manager
@@ -72,9 +83,18 @@ public class Magnetometer extends CordovaPlugin implements SensorEventListener  
     List<CallbackContext> watchContexts;
 
     public Magnetometer() {
-        this.x = 0;
-        this.y = 0;
-        this.z = 0;
+        this.ax = 0;
+        this.ay = 0;
+        this.az = 0;
+
+        this.gx = 0;
+        this.gy = 0;
+        this.gz = 0;
+
+        this.mx = 0;
+        this.my = 0;
+        this.mz = 0;
+
         this.timeStamp = 0;
         this.watchContexts = new ArrayList<CallbackContext>();
         this.setStatus(Magnetometer.STOPPED);
@@ -152,6 +172,7 @@ public class Magnetometer extends CordovaPlugin implements SensorEventListener  
         @SuppressWarnings("deprecation")
         List<Sensor> list = this.sensorManager.getSensorList(Sensor.TYPE_MAGNETIC_FIELD);
         List<Sensor> accelerometerList = this.sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER);
+        List<Sensor> gyroList = this.sensorManager.getSensorList(Sensor.TYPE_GYROSCOPE);
 
         // If found, then register as listener
         if (list != null && list.size() > 0) {
@@ -161,8 +182,12 @@ public class Magnetometer extends CordovaPlugin implements SensorEventListener  
 
             this.magnetometer = list.get(0);
             this.accelerometer = accelerometerList.get(0);
+            this.gyroscope = gyroList.get(0);
+
             this.sensorManager.registerListener(this, this.magnetometer, SensorManager.SENSOR_DELAY_FASTEST);
             this.sensorManager.registerListener(this, this.accelerometer, SensorManager.SENSOR_DELAY_FASTEST);
+            this.sensorManager.registerListener(this, this.gyroscope, SensorManager.SENSOR_DELAY_FASTEST);
+
             this.lastAccessTime = System.currentTimeMillis();
             this.setStatus(Magnetometer.STARTING);
         }
@@ -213,32 +238,26 @@ public class Magnetometer extends CordovaPlugin implements SensorEventListener  
     public void onSensorChanged(SensorEvent event) {
 
         // onSensorChanged gets called for each sensor so we have to remember the values
-                 if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER)
-                 {
+                 if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
                      mAccelerometer = event.values;
+                     this.ax = mAccelerometer[0];
+                     this.ay = mAccelerometer[1];
+                     this.az = mAccelerometer[2];
                  }
-                 if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD)
-                 {
+                 if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
                      mGeomagnetic = event.values;
+
+                     this.mx = mGeomagnetic[0];
+                     this.my = mGeomagnetic[1];
+                     this.mz = mGeomagnetic[2];
                  }
+                 if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
+                      mGyroscope = event.values;
 
-                 if (mAccelerometer != null && mGeomagnetic != null)
-                 {
-                     float R[] = new float[9];
-                     float I[] = new float[9];
-                     boolean success = SensorManager.getRotationMatrix(R, I, mAccelerometer, mGeomagnetic);
-
-                     if (success)
-                     {
-                         float orientation[] = new float[3];
-                         SensorManager.getOrientation(R, orientation);
-
-                         // at this point, orientation contains the azimuth, pitch and roll values.
-                         this.x = (float) (180 * orientation[0] / Math.PI);
-                         this.y = (float) (180 * orientation[1] / Math.PI);
-                         this.z = (float) (180 * orientation[2] / Math.PI);
-                     }
-                 }
+                      this.gx = mGyroscope[0];
+                      this.gy = mGyroscope[1];
+                      this.gz = mGyroscope[2];
+                  }
     }
 
     /**
@@ -279,13 +298,21 @@ public class Magnetometer extends CordovaPlugin implements SensorEventListener  
     private JSONObject getReading() throws JSONException {
         JSONObject obj = new JSONObject();
 
-        obj.put("x", this.x);
-        obj.put("y", this.y);
-        obj.put("z", this.z);
+        obj.put("ax", this.ax);
+        obj.put("ay", this.ay);
+        obj.put("az", this.az);
 
-        double x2 = Float.valueOf(this.x * this.x).doubleValue();
-        double y2 = Float.valueOf(this.y * this.y).doubleValue();
-        double z2 = Float.valueOf(this.z * this.z).doubleValue();
+        obj.put("mx", this.mx);
+        obj.put("my", this.my);
+        obj.put("mz", this.mz);
+
+        obj.put("gx", this.gx);
+        obj.put("gy", this.gy);
+        obj.put("gz", this.gz);
+
+        double x2 = Float.valueOf(this.mx * this.mx).doubleValue();
+        double y2 = Float.valueOf(this.my * this.my).doubleValue();
+        double z2 = Float.valueOf(this.mz * this.mz).doubleValue();
 
         obj.put("magnitude", Math.sqrt(x2 + y2 + z2));
 

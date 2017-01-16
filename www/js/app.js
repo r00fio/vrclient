@@ -4,6 +4,7 @@
 var app = angular.module('app', ['ionic','ui.router']);
 
 app.config(function ($stateProvider, $urlRouterProvider) {
+    
 
     $stateProvider
         .state('start', {
@@ -27,7 +28,5 @@ app.config(function ($stateProvider, $urlRouterProvider) {
         controller: 'DeviceOrientationCtrl',
         cache: false
     });
-
-    // $urlRouterProvider.otherwise("/start");
-
+    
 });

@@ -10,8 +10,10 @@ accelerometer.sensivity.x = 20000;
 accelerometer.sensivity.y = 20000;
 accelerometer.sensivity.z = 20000;
 
-application.controller('SensorsCtrl', ['$scope', '$state', '$rootScope', '$timeout',
-    function ($scope, $state, $rootScope, $timeout) {
+application.controller('SensorsCtrl', ['$scope', '$state', '$rootScope', '$timeout', 'accelerometerService',
+    function ($scope, $state, $rootScope, $timeout, accelerometerService) {
+
+        $scope.acceleration = {};
 
         $scope.calibrateSensors = function () {
             $timeout(function () {
@@ -22,26 +24,26 @@ application.controller('SensorsCtrl', ['$scope', '$state', '$rootScope', '$timeo
                 var audio = new Audio('sounds/calibration_complete.mp3')
                 audio.volume = 1;
                 audio.play();
-            },2000)
+            }, 2000)
         };
 
         if (window.screen.lockOrientation) {
             window.screen.lockOrientation('portrait');
         }
-        var host = 'http://172.17.1.9:3000/orientation/accelerometer';
-        $scope.acceleration = {};
+
 
         function sendData() {
             var data = {
                 ax: $scope.acceleration.x,
                 ay: $scope.acceleration.y,
                 az: $scope.acceleration.z,
-                aT: $scope.acceleration.timestamp
-            }
+                aT: $scope.acceleration.timestamp,
+                side: 'left'
+            };
 
             $.ajax({
                 type: 'POST',
-                url: host,
+                url: $rootScope.host.url + '/orientation/accelerometer',
                 data: data,
                 success: function (data) {
                 },
@@ -55,11 +57,9 @@ application.controller('SensorsCtrl', ['$scope', '$state', '$rootScope', '$timeo
             alert('onError!');
         }
 
-        var options = {frequency: 20};  // Update every 3 seconds
+        var options = {frequency: 40};  // Update every 3 seconds
 
         navigator.accelerometer.watchAcceleration(detectShake, onError, options);
-
-
 
 
 //для более стабильной работы - использовать два смартфона и считывать наклон с ноги которая не в движении
@@ -71,15 +71,15 @@ application.controller('SensorsCtrl', ['$scope', '$state', '$rootScope', '$timeo
 
             $rootScope.$applyAsync();
 
-            if ($scope.acceleration.x > accelerometer.stop.x + accelerometer.sensivity.x ||
-                $scope.acceleration.x < accelerometer.stop.x - accelerometer.sensivity.x ||
-                $scope.acceleration.y > accelerometer.stop.y + accelerometer.sensivity.y ||
-                $scope.acceleration.y < accelerometer.stop.y - accelerometer.sensivity.y ||
-                $scope.acceleration.z > accelerometer.stop.z + accelerometer.sensivity.z ||
-                $scope.acceleration.z < accelerometer.stop.z - accelerometer.sensivity.z
-            ) {
+            // if ($scope.acceleration.x > accelerometer.stop.x + accelerometer.sensivity.x ||
+            //     $scope.acceleration.x < accelerometer.stop.x - accelerometer.sensivity.x ||
+            //     $scope.acceleration.y > accelerometer.stop.y + accelerometer.sensivity.y ||
+            //     $scope.acceleration.y < accelerometer.stop.y - accelerometer.sensivity.y ||
+            //     $scope.acceleration.z > accelerometer.stop.z + accelerometer.sensivity.z ||
+            //     $scope.acceleration.z < accelerometer.stop.z - accelerometer.sensivity.z
+            // ) {
                 sendData();
-            }
+            // }
 
 
         }

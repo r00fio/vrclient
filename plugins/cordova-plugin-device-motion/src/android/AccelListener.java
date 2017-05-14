@@ -52,7 +52,7 @@ public class AccelListener extends CordovaPlugin implements SensorEventListener 
     private float x,y,z;                                // most recent acceleration values
     private long timestamp;                         // time of most recent value
     private int status;                                 // status of listener
-    private int accuracy = SensorManager.SENSOR_STATUS_ACCURACY_MEDIUM;
+    private int accuracy = SensorManager.SENSOR_STATUS_ACCURACY_HIGH;
 
     private SensorManager sensorManager;    // Sensor manager
     private Sensor mSensor;                           // Acceleration sensor returned by sensor manager
@@ -154,11 +154,11 @@ public class AccelListener extends CordovaPlugin implements SensorEventListener 
         // If found, then register as listener
         if ((list != null) && (list.size() > 0)) {
           this.mSensor = list.get(0);
-          if (this.sensorManager.registerListener(this, this.mSensor, SensorManager.SENSOR_DELAY_UI)) {
+          if (this.sensorManager.registerListener(this, this.mSensor, SensorManager.SENSOR_DELAY_FASTEST)) {
               this.setStatus(AccelListener.STARTING);
               // CB-11531: Mark accuracy as 'reliable' - this is complementary to
               // setting it to 'unreliable' 'stop' method
-              this.accuracy = SensorManager.SENSOR_STATUS_ACCURACY_MEDIUM;
+              this.accuracy = SensorManager.SENSOR_STATUS_ACCURACY_HIGH;
           } else {
               this.setStatus(AccelListener.ERROR_FAILED_TO_START);
               this.fail(AccelListener.ERROR_FAILED_TO_START, "Device sensor returned an error.");
@@ -205,7 +205,7 @@ public class AccelListener extends CordovaPlugin implements SensorEventListener 
      */
     private void timeout() {
         if (this.status == AccelListener.STARTING &&
-            this.accuracy >= SensorManager.SENSOR_STATUS_ACCURACY_MEDIUM) {
+            this.accuracy >= SensorManager.SENSOR_STATUS_ACCURACY_HIGH) {
             // call win with latest cached position
             // but first check if cached position is reliable
             this.timestamp = System.currentTimeMillis();
@@ -249,7 +249,7 @@ public class AccelListener extends CordovaPlugin implements SensorEventListener 
         }
         this.setStatus(AccelListener.RUNNING);
 
-        if (this.accuracy >= SensorManager.SENSOR_STATUS_ACCURACY_MEDIUM) {
+        //if (this.accuracy >= SensorManager.SENSOR_STATUS_ACCURACY_HIGH) {
 
             // Save time that event was received
             this.timestamp = System.currentTimeMillis();
@@ -258,7 +258,7 @@ public class AccelListener extends CordovaPlugin implements SensorEventListener 
             this.z = event.values[2];
 
             this.win();
-        }
+        //}
     }
 
     /**

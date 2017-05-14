@@ -14,7 +14,7 @@ application.controller('SensorsCtrl', ['$scope', '$state', '$rootScope', '$timeo
     function ($scope, $state, $rootScope, $timeout, accelerometerService) {
 
         $scope.acceleration = {};
-
+        $scope.url = localStorage.getItem('host');
         $scope.calibrateSensors = function () {
             $timeout(function () {
                 accelerometer.stop.z = $scope.acceleration.z;
@@ -31,7 +31,7 @@ application.controller('SensorsCtrl', ['$scope', '$state', '$rootScope', '$timeo
             window.screen.lockOrientation('portrait');
         }
 
-
+      
         function sendData() {
             var data = {
                 ax: $scope.acceleration.x,
@@ -43,12 +43,12 @@ application.controller('SensorsCtrl', ['$scope', '$state', '$rootScope', '$timeo
 
             $.ajax({
                 type: 'POST',
-                url: $rootScope.host.url + '/orientation/accelerometer',
+                url: $scope.url + '/orientation/accelerometer',
                 data: data,
                 success: function (data) {
                 },
-                dataType: 'json',
-                async: false
+                dataType: 'json'
+                // async: false
             });
 
         }

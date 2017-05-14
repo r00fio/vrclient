@@ -16,26 +16,21 @@ application.controller('DeviceOrientationCtrl', ['$scope', '$state', '$rootScope
         $scope.rotation = {};
         $scope.old = {};
         $scope.skipSendData = false;
-
+        $scope.url = localStorage.getItem('host');
 
         $timeout(function () {
             var watchID = cordova.plugins.magnetometer.watchReadings(onSuccess, onError)
-            // if (navigator.fusion) {
-            //     navigator.fusion.setMode(function (result) {
-            //
-            //     }, function (error) {
-            //
-            //     }, {mode: 5});
-            // }
-            // var options = {
-            //     frequency: 100
-            // }; 
-            // if (navigator.fusion) {
-            //     var watchID = navigator.fusion.watchSensorFusion(onSuccess, onError, options);
-            // }
-
-        }, 3000)
-
+            // var options = {frequency: 7};  // Update every 3 seconds
+            navigator.accelerometer.watchAcceleration(success, onError, options);
+        }, 3000);
+        
+        function success(result) {
+            result.ax = result.x;
+            result.ay = result.y;
+            result.az = result.z;
+            onSuccess(result);
+        }
+        
         function onSuccess(result) {
             $scope.rotation.ax = Math.round(result.ax * 100);
             $scope.rotation.ay = Math.round(result.ay * 100);
@@ -48,6 +43,7 @@ application.controller('DeviceOrientationCtrl', ['$scope', '$state', '$rootScope
             $scope.rotation.gx = Math.round(result.gx * 100);
             $scope.rotation.gy = Math.round(result.gy * 100);
             $scope.rotation.gz = Math.round(result.gz * 100);
+            $scope.rotation.timestamp = result.timestamp;
             //
             // $scope.rotation.x = result.quaternion.x * 100;
             // $scope.rotation.y = result.quaternion.y * 100;
@@ -95,7 +91,7 @@ application.controller('DeviceOrientationCtrl', ['$scope', '$state', '$rootScope
 
             $.ajax({
                 type: 'POST',
-                url: $rootScope.host.url + '/orientation',
+                url: $scope.url + '/orientation',
                 data: data,
                 success: function (data) {
                 },
